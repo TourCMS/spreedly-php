@@ -71,11 +71,24 @@ echo $result->message;
 
 ### List gateways
 
-
-https://docs.spreedly.com/gateways/redacting
+https://docs.spreedly.com/gateways/getting#getting-all-gateways
 
 ```php
 $result = $sly->list_gateways();
+			
+foreach( $result->gateway as $gateway )
+{
+	echo "(" . $gateway->name . ") ";
+	echo $gateway->token;
+}
+```
+
+### Show gateway
+
+https://docs.spreedly.com/gateways/getting#getting-one-gateway
+
+```php
+$result = $sly->show_gateway('GATEWAY_TOKEN');
 			
 print_r($resul);
 ```
