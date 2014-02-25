@@ -186,7 +186,7 @@ print_r($transaction);
 Optionally specify an amount - less than the original authorization -  to capture.
 
 ```php
-$transaction = $sly->capture('TRANSACTION_TOKEN', 100);
+$transaction = $sly->capture('TRANSACTION_TOKEN', 50);
 			
 print_r($transaction);
 ```
