@@ -193,7 +193,7 @@ $transaction = $sly->capture('TRANSACTION_TOKEN');
 print_r($transaction);
 ```
 
-### Credit
+### Credit (Refund)
 
 A credit is like a void, except it actually reverses a charge instead of just canceling a charge that hasn’t yet been made. It’s a refund.
 
