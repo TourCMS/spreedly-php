@@ -73,8 +73,6 @@ class Spreedly {
 		curl_setopt($ch, CURLOPT_TIMEOUT, 0 );
 		curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 		curl_setopt($ch, CURLOPT_HEADER, true);
-//		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); 
-//		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 		curl_setopt($ch, CURLOPT_USERPWD, $this->_environment_key . ":" . $this->_api_access_secret);
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
