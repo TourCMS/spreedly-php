@@ -90,5 +90,25 @@ https://docs.spreedly.com/gateways/getting#getting-one-gateway
 ```php
 $result = $sly->show_gateway('GATEWAY_TOKEN');
 			
-print_r($resul);
+print_r($result);
 ```
+
+## Payment methods & transactions
+
+Payment methods include credit cards, bank accounts etc. Stored in the system by capturing payment details, perhaps via a [payment form](https://docs.spreedly.com/payment-methods/adding-with-redirect).
+
+### Purchase
+
+A purchase call immediately takes funds from the payment method (assuming the transaction succeeds).
+
+```php
+$transaction = $sly->purchase(
+					'PAYMENT_TOKEN',
+					'amount' => 100,
+					'ip' => '127.0.0.1'
+					....
+					);
+			
+print_r($transaction);
+```
+
