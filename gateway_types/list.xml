@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<gateways><gateway><gateway_type>authorize_net</gateway_type><name>Authorize.net</name></gateway><gateway><gateway_type>cyber_source</gateway_type><name>CyberSource</name></gateway><gateway><gateway_type>test</gateway_type><name>Spreedly Test</name></gateway></gateways>

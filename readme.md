@@ -1,0 +1,1 @@
+# Spreedly API wrapper
