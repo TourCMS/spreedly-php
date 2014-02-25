@@ -1,4 +1,4 @@
-# PHP wrapper for the Spreedly API
+# PHP wrapper for the Spreedly Core API
 
 https://spreedly.com/
 
