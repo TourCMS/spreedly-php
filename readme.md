@@ -183,6 +183,27 @@ $transaction = $sly->capture('TRANSACTION_TOKEN');
 print_r($transaction);
 ```
 
+Optionally specify an amount - less than the original authorization -  to capture.
+
+```php
+$transaction = $sly->capture('TRANSACTION_TOKEN', 100);
+			
+print_r($transaction);
+```
+
+Or more detailed transaction information.
+
+```php
+$transaction = $sly->capture(
+						'TRANSACTION_TOKEN',
+						array(
+							'order_id' => 'ABC123',
+							'amount' => 50
+						));
+			
+print_r($transaction);
+```
+
 ### Void
 
 Void is used to cancel out authorizations and, with some gateways, to cancel actual payment transactions within the first 24 hours (credits are used after that; see below).
@@ -190,7 +211,20 @@ Void is used to cancel out authorizations and, with some gateways, to cancel act
 https://docs.spreedly.com/payment-methods/using#void
 
 ```php
-$transaction = $sly->capture('TRANSACTION_TOKEN');
+$transaction = $sly->void('TRANSACTION_TOKEN');
+			
+print_r($transaction);
+```
+
+Or provide more detailed transaction information.
+
+
+```php
+$transaction = $sly->void(
+						'TRANSACTION_TOKEN',
+						array(
+							'order_id' => 'ABC123'
+						));
 			
 print_r($transaction);
 ```
@@ -202,8 +236,28 @@ A credit is like a void, except it actually reverses a charge instead of just ca
 https://docs.spreedly.com/payment-methods/using#credit
 
 ```php
-$transaction = $sly->capture('TRANSACTION_TOKEN');
+$transaction = $sly->credit('TRANSACTION_TOKEN');
 			
 print_r($transaction);
 ```
 
+Optionally specify an amount to refund.
+
+```php
+$transaction = $sly->credit('TRANSACTION_TOKEN', 50);
+			
+print_r($transaction);
+```
+
+Or more detailed transaction information.
+
+```php
+$transaction = $sly->credit(
+						'TRANSACTION_TOKEN',
+						array(
+							'order_id' => 'ABC123',
+							'amount' => 50
+						));
+			
+print_r($transaction);
+```
