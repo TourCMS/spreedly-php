@@ -95,11 +95,11 @@ print_r($result);
 
 ## Managing payment methods
 
-Payment methods include credit cards, bank accounts etc. When payment methods are captured in Spreedly (perhaps via a [payment form](https://docs.spreedly.com/payment-methods/adding-with-redirect)) they are assigned a unique token for subsequent use.
+Payment methods include credit cards, bank accounts etc. When payment methods are captured in Spreedly (perhaps via a [payment form](https://docs.spreedly.com/payment-methods/adding-with-redirect)) they are assigned a unique token for subsequent purchase/authorization.
 
 ### Retaining a payment method
 
-Payment methods captured via transparent redirect are only held temporarily, use "Retain" to keep them active.
+Payment methods captured via transparent redirect are only held temporarily, use "Retain" if you need to keep them active.
 
 https://docs.spreedly.com/payment-methods/storing#retaining-a-payment-method
 
@@ -144,10 +144,11 @@ https://docs.spreedly.com/payment-methods/using#purchase
 ```php
 $transaction = $sly->purchase(
 					'PAYMENT_METHOD_TOKEN',
-					'amount' => 100,
-					'ip' => '127.0.0.1'
-					....
-					);
+					array(
+						'amount' => 100,
+						'ip' => '127.0.0.1'
+						....
+					));
 			
 print_r($transaction);
 ```
@@ -161,10 +162,11 @@ https://docs.spreedly.com/payment-methods/using#authorize
 ```php
 $transaction = $sly->authorize(
 					'PAYMENT_METHOD_TOKEN',
-					'amount' => 100,
-					'ip' => '127.0.0.1'
-					....
-					);
+					array(
+						'amount' => 100,
+						'ip' => '127.0.0.1'
+						....
+					));
 			
 echo $transaction->token;
 ```
