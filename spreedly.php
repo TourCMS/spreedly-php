@@ -57,11 +57,7 @@ class Spreedly {
 	public function request($path, $data = null, $verb = null) {
 		// Prepare the URL we are sending to
 		$url = $this->_base_url.$path;
-		//$url = "http://tourcmsdev.macbook/scratch/log/";
-//		print $url;
-//		
-//		print $data->asXml();
-//		exit();
+
 		// Build headers
 		//$headers = array("Content-type: text/xml;charset=\"utf-8\"");
 		$headers = array("Content-type: application/xml;");
