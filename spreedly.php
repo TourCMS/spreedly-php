@@ -21,7 +21,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 THE SOFTWARE.
 */
 
-# Spreedly v1 API
+# Spreedly Core v1 API
 # Version: WIP
 # Author: Paul Slugocki
 
