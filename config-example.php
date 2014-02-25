@@ -1,5 +1,5 @@
 <?php 
-// Set up Spreedly object
+	// Set up Spreedly object
 
 	// Environment (e.g. Test)
 	$sly_environment = '';
