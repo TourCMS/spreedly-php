@@ -93,21 +93,114 @@ $result = $sly->show_gateway('GATEWAY_TOKEN');
 print_r($result);
 ```
 
-## Payment methods & transactions
+## Managing payment methods
 
-Payment methods include credit cards, bank accounts etc. Stored in the system by capturing payment details, perhaps via a [payment form](https://docs.spreedly.com/payment-methods/adding-with-redirect).
+Payment methods include credit cards, bank accounts etc. When payment methods are captured in Spreedly (perhaps via a [payment form](https://docs.spreedly.com/payment-methods/adding-with-redirect)) they are assigned a unique token for subsequent use.
+
+### Retaining a payment method
+
+Payment methods captured via transparent redirect are only held temporarily, use "Retain" to keep them active.
+
+https://docs.spreedly.com/payment-methods/storing#retaining-a-payment-method
+
+```php
+$result = $sly->retain('PAYMENT_METHOD_TOKEN');
+			
+print $result->message;
+```
+
+### Redact a payment method
+
+Rather than delete a payment method, in Core you “redact” it, removing all sensitive information but leaving a place for any transactions to hang off of.
+
+https://docs.spreedly.com/payment-methods/storing#redacting-a-payment-method
+
+```php
+$result = $sly->redact('PAYMENT_METHOD_TOKEN');
+			
+print $result->message;
+```
+
+### Remove a payment method from the gateway
+
+Most of the time, simply redacting a payment method will suffice because payment methods are for the most part only stored in Spreedly. There are times though when a payment method is stored on the gateway and you’d like to notify the gateway that it can no longer be used.
+
+https://docs.spreedly.com/payment-methods/storing#removing-a-payment-method-from-a-gateway
+
+```php
+$result = $sly->remove_from_gateway('PAYMENT_METHOD_TOKEN', 'GATEWAY_TOKEN');
+			
+print $result->message;
+```
+
+## Using payment methods
 
 ### Purchase
 
 A purchase call immediately takes funds from the payment method (assuming the transaction succeeds).
 
+https://docs.spreedly.com/payment-methods/using#purchase
+
 ```php
 $transaction = $sly->purchase(
-					'PAYMENT_TOKEN',
+					'PAYMENT_METHOD_TOKEN',
 					'amount' => 100,
 					'ip' => '127.0.0.1'
 					....
 					);
+			
+print_r($transaction);
+```
+
+### Authorize
+
+An authorize works just like a purchase; the difference being that it doesn’t actually take the funds.
+
+https://docs.spreedly.com/payment-methods/using#authorize
+
+```php
+$transaction = $sly->authorize(
+					'PAYMENT_METHOD_TOKEN',
+					'amount' => 100,
+					'ip' => '127.0.0.1'
+					....
+					);
+			
+echo $transaction->token;
+```
+
+### Capture
+
+A capture will actually take the funds previously reserved via an authorization.
+
+https://docs.spreedly.com/payment-methods/using#capture
+
+```php
+$transaction = $sly->capture('TRANSACTION_TOKEN');
+			
+print_r($transaction);
+```
+
+### Void
+
+Void is used to cancel out authorizations and, with some gateways, to cancel actual payment transactions within the first 24 hours (credits are used after that; see below).
+
+https://docs.spreedly.com/payment-methods/using#void
+
+```php
+$transaction = $sly->capture('TRANSACTION_TOKEN');
+			
+print_r($transaction);
+```
+
+### Credit
+
+A credit is like a void, except it actually reverses a charge instead of just canceling a charge that hasn’t yet been made. It’s a refund.
+
+https://docs.spreedly.com/payment-methods/using#credit
+
+```php
+$transaction = $sly->capture('TRANSACTION_TOKEN');
 			
 print_r($transaction);
 ```
