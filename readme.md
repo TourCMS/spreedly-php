@@ -27,6 +27,16 @@ $sly = new Spreedly($sly_environment, $sly_access_secret, $sly_signing_secret);
 
 https://docs.spreedly.com/gateways/adding
 
+Spreedly test gateway:
+
+```php
+$result = $sly->create_gateway('test');
+				
+echo $new_gateway->gateway->token;
+```
+
+Real example:
+
 ```php
 $result = $sly->create_gateway(
 						'authorize_net',
