@@ -23,6 +23,36 @@ $sly = new Spreedly($sly_environment, $sly_access_secret, $sly_signing_secret);
 
 ## Gateways
 
+### Refresh supported gateways
+
+The wrapper will store a copy of the Spreedly gateways specs XML
+
+```php
+$result = $sly->refresh_supported_gateways();
+```
+
+### List supported gateways
+
+Load the cached gateway spec file
+```php
+$result = $sly->list_supported_gateways();
+
+foreach($resut->gateway as $g) {
+	echo $g->gateway_name . "(" . $g->gateway_type . ")<br />";
+}
+```
+
+### Show supported gateway
+
+Return the details about a specific supported gateway
+
+```php
+$result = $sly->show_supported_gateway('authorize_net');
+
+$print_r($result);
+```
+
+
 ### Create gateway
 
 https://docs.spreedly.com/gateways/adding
@@ -31,7 +61,7 @@ Spreedly test gateway:
 
 ```php
 $result = $sly->create_gateway('test');
-				
+
 echo $new_gateway->gateway->token;
 ```
 
@@ -45,7 +75,7 @@ $result = $sly->create_gateway(
 							'password' => 'YOUR_AUTHORIZE_NET_TRANSACTION_KEY'
 						)
 				);
-				
+
 echo $new_gateway->gateway->token;
 ```
 
@@ -63,7 +93,7 @@ $result = $sly->update_gateway(
 							'password' => 'YOUR_AUTHORIZE_NET_TRANSACTION_KEY'
 						)
 				);
-				
+
 echo $result->message;
 ```
 
@@ -75,7 +105,7 @@ https://docs.spreedly.com/gateways/redacting
 
 ```php
 $result = $sly->redact_gateway('GATEWAY_TOKEN');
-				
+
 echo $result->message;
 ```
 
@@ -85,7 +115,7 @@ https://docs.spreedly.com/gateways/getting#getting-all-gateways
 
 ```php
 $result = $sly->list_gateways();
-			
+
 foreach( $result->gateway as $gateway )
 {
 	echo "(" . $gateway->name . ") ";
@@ -99,7 +129,7 @@ https://docs.spreedly.com/gateways/getting#getting-one-gateway
 
 ```php
 $result = $sly->show_gateway('GATEWAY_TOKEN');
-			
+
 print_r($result);
 ```
 
@@ -115,7 +145,7 @@ https://docs.spreedly.com/payment-methods/storing#retaining-a-payment-method
 
 ```php
 $result = $sly->retain('PAYMENT_METHOD_TOKEN');
-			
+
 print $result->message;
 ```
 
@@ -127,7 +157,7 @@ https://docs.spreedly.com/payment-methods/storing#redacting-a-payment-method
 
 ```php
 $result = $sly->redact('PAYMENT_METHOD_TOKEN');
-			
+
 print $result->message;
 ```
 
@@ -139,7 +169,7 @@ https://docs.spreedly.com/payment-methods/storing#removing-a-payment-method-from
 
 ```php
 $result = $sly->remove_from_gateway('PAYMENT_METHOD_TOKEN', 'GATEWAY_TOKEN');
-			
+
 print $result->message;
 ```
 
@@ -159,7 +189,7 @@ $transaction = $sly->purchase(
 						'ip' => '127.0.0.1'
 						....
 					));
-			
+
 print_r($transaction);
 ```
 
@@ -177,7 +207,7 @@ $transaction = $sly->authorize(
 						'ip' => '127.0.0.1'
 						....
 					));
-			
+
 echo $transaction->token;
 ```
 
@@ -189,7 +219,7 @@ https://docs.spreedly.com/payment-methods/using#capture
 
 ```php
 $transaction = $sly->capture('TRANSACTION_TOKEN');
-			
+
 print_r($transaction);
 ```
 
@@ -197,7 +227,7 @@ Optionally specify an amount - less than the original authorization -  to captur
 
 ```php
 $transaction = $sly->capture('TRANSACTION_TOKEN', 50);
-			
+
 print_r($transaction);
 ```
 
@@ -210,7 +240,7 @@ $transaction = $sly->capture(
 							'order_id' => 'ABC123',
 							'amount' => 50
 						));
-			
+
 print_r($transaction);
 ```
 
@@ -222,7 +252,7 @@ https://docs.spreedly.com/payment-methods/using#void
 
 ```php
 $transaction = $sly->void('TRANSACTION_TOKEN');
-			
+
 print_r($transaction);
 ```
 
@@ -235,7 +265,7 @@ $transaction = $sly->void(
 						array(
 							'order_id' => 'ABC123'
 						));
-			
+
 print_r($transaction);
 ```
 
@@ -247,7 +277,7 @@ https://docs.spreedly.com/payment-methods/using#credit
 
 ```php
 $transaction = $sly->credit('TRANSACTION_TOKEN');
-			
+
 print_r($transaction);
 ```
 
@@ -255,7 +285,7 @@ Optionally specify an amount to refund.
 
 ```php
 $transaction = $sly->credit('TRANSACTION_TOKEN', 50);
-			
+
 print_r($transaction);
 ```
 
@@ -268,6 +298,6 @@ $transaction = $sly->credit(
 							'order_id' => 'ABC123',
 							'amount' => 50
 						));
-			
+
 print_r($transaction);
 ```
