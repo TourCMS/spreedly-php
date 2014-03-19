@@ -32,7 +32,7 @@ class Spreedly {
 	protected $_api_access_secret = '';
 	protected $_environment_key = '';
 	protected $_signing_secret = '';
-	
+
 	/**
 	 * __construct
 	 *
@@ -45,7 +45,7 @@ class Spreedly {
 		$this->_environment_key = $environment_key;
 		$this->_signing_secret = $signing_secret;
 	}
-	
+
 	/**
 	 * request
 	 *
@@ -61,8 +61,8 @@ class Spreedly {
 		// Build headers
 		//$headers = array("Content-type: text/xml;charset=\"utf-8\"");
 		$headers = array("Content-type: application/xml;");
-		
-				
+
+
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, $url);
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
@@ -72,23 +72,23 @@ class Spreedly {
 		curl_setopt($ch, CURLOPT_USERPWD, $this->_environment_key . ":" . $this->_api_access_secret);
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-		
+
 		// If we have a verb set it
 		if(!empty($verb)) {
 			curl_setopt( $ch, CURLOPT_CUSTOMREQUEST, $verb );
-			
+
 			if(empty($data)) {
 				curl_setopt($ch, CURLOPT_POSTFIELDS, '');
 			}
 		}
-		
+
 		// If we have some XML data to post add it
 		if(!empty($data)) {
 			curl_setopt($ch, CURLOPT_POSTFIELDS, $data->asXml());
 		}
-		
+
 		$response = curl_exec($ch);
-		
+
 		// Strip out the result
 		$header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
 		$result = substr( $response, $header_size );
@@ -96,60 +96,51 @@ class Spreedly {
 		$result = simplexml_load_string($result);
 		return($result);
 	}
-	
-// Gateways - Non API methods
+
+// Gateways - Options
 
 	public function refresh_supported_gateways() {
-	
-		$gateway_dir =  dirname(__FILE__) . DIRECTORY_SEPARATOR . 'gateway_types';
-		
-		$output_xml = new SimpleXMLElement('<gateways />');
-		
-		if ($handle = opendir($gateway_dir . DIRECTORY_SEPARATOR . 'specs')) {
-		
-		    while (false !== ($file = readdir($handle))) {
-		        if ('.' === $file) continue;
-		        if ('..' === $file) continue;
-				if ('xml' != substr($file, -3)) continue;
-		        
-		        // do something with the file
-		        $gateway_xml = simplexml_load_file($gateway_dir . DIRECTORY_SEPARATOR . 'specs' . DIRECTORY_SEPARATOR . $file);
-		        
-		        $gateway = $output_xml->addChild('gateway');
-		        $gateway->addChild('gateway_type', $gateway_xml->gateway_type);
-		        $gateway->addChild('name', $gateway_xml->name);
-		        
-		    }
-		    
-		    closedir($handle);
-		    
-		    $output_file = fopen($gateway_dir . DIRECTORY_SEPARATOR . 'list.xml', 'w') or die('Cannot open file:'); //
-		 
-		    fwrite($output_file, $output_xml->asXml());
-		    
+
+				$path = '/gateways.xml';
+
+				$data = $this->request($path, null, 'OPTIONS');
+
+				$gateway_dir =  dirname(__FILE__) . DIRECTORY_SEPARATOR . 'gateway_types';
+
+		    $output_file = fopen($gateway_dir . DIRECTORY_SEPARATOR . 'list.xml', 'w') or die('Cannot open file:');
+
+		    fwrite($output_file, $data->asXml());
+
 		    fclose($output_file);
-		    
-		}
+
+
 	}
-	
+
 	public function list_supported_gateways() {
-		
+
 		$gateway_list =  dirname(__FILE__) . DIRECTORY_SEPARATOR . 'gateway_types' . DIRECTORY_SEPARATOR . 'list.xml';
-		
+
 		return simplexml_load_file($gateway_list);
-		
+
 	}
-	
+
 	public function show_supported_gateway($type) {
-		
-		$gateway_list =  dirname(__FILE__) . DIRECTORY_SEPARATOR . 'gateway_types' . DIRECTORY_SEPARATOR . 'specs' . DIRECTORY_SEPARATOR . $type . '.xml';
-		
-		return simplexml_load_file($gateway_list);
-		
+
+		$gateway_list =  simplexml_load_file(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'gateway_types' . DIRECTORY_SEPARATOR . 'list.xml');
+
+		$xpath = '//gateway[gateway_type="' . $type . '"]';
+
+		$result = $gateway_list->xpath($xpath);
+
+		if(count($result))
+			return $result[0];
+		else
+			return null;
+
 	}
-	
+
 // Gateways - API Methods
-	
+
 	/**
 	 * list_gateways
 	 *
@@ -157,16 +148,16 @@ class Spreedly {
 	 * @param $since_token Get next page (of 20) by passing the token from the last gateway on previous list
 	 */
 	public function list_gateways($since_token = null) {
-		
+
 		$path = '/gateways.xml';
-		
+
 		if(!empty($since_token))
 			$path .= '?since_token=' . $since_token;
-			
+
 		return $this->request($path);
-		
+
 	}
-	
+
 	/**
 	 * show_gateway
 	 *
@@ -174,11 +165,11 @@ class Spreedly {
 	 * @param $token Token for the gateway to show
 	 */
 	public function show_gateway($token) {
-	
+
 		return $this->request('/gateways/' . $token . '.xml');
-		
+
 	}
-	
+
 	/**
 	 * create_gateway
 	 *
@@ -187,25 +178,25 @@ class Spreedly {
 	 * @param $gateway_settings Associative array containing the settings
 	 */
 	public function create_gateway($gateway_type, $gateway_settings = null) {
-		
+
 		$xml = null;
-		
+
 		if(!empty($gateway_settings)) {
-		
+
 			$xml = new SimpleXMLElement('<gateway />');
-			
+
 			$xml->addChild('gateway_type', $gateway_type);
-			
+
 			foreach($gateway_settings as $key => $setting) {
 				$xml->addChild($key, $setting);
 			}
-			
+
 		}
-		
+
 		return $this->request('/gateways.xml', $xml);
-	
+
 	}
-	
+
 	/**
 	 * retain_gateway
 	 *
@@ -215,9 +206,9 @@ class Spreedly {
 	public function retain_gateway($token) {
 
 		return $this->request('/gateways/' . $token . '/retain.xml', null, 'PUT');
-	
+
 	}
-	
+
 	/**
 	 * update_gateway
 	 *
@@ -226,17 +217,17 @@ class Spreedly {
 	 * @param $gateway_settings Associative array containing the settings
 	 */
 	public function update_gateway($token, $gateway_settings) {
-		
+
 		$xml = new SimpleXMLElement('<gateway />');
-		
+
 		foreach($gateway_settings as $key => $setting) {
 			$xml->addChild($key, $setting);
 		}
-		
+
 		return $this->request('/gateways/' . $token . '.xml', $xml, 'PUT');
-	
+
 	}
-	
+
 	/**
 	 * redact_gateway
 	 *
@@ -245,9 +236,9 @@ class Spreedly {
 	 * @param $gateway_settings Associative array containing the settings
 	 */
 	public function redact_gateway($token) {
-	
+
 		return $this->request('/gateways/' . $token . '/redact.xml', null, 'PUT');
-	
+
 	}
 
 // Payment methods (cards, banks etc)
@@ -259,13 +250,13 @@ class Spreedly {
 	 * @param $token The token for the payment method to show
 	 */
 	public function show_payment_method($token) {
-	
+
 		return $this->request('/payment_methods/' . $token . '.xml');
-	
+
 	}
 
 // Transactions
-	
+
 	// Purchase
 
 	/**
@@ -276,17 +267,17 @@ class Spreedly {
 	 * @param $transaction_details Associative array containing the transaction details
 	 */
 	public function purchase($gateway_token, $transaction_details) {
-	
+
 		$xml = new SimpleXMLElement('<transaction/>');
-		
+
 		foreach($transaction_details as $key => $detail) {
 			$xml->addChild($key, $detail);
 		}
-	
+
 		return $this->request('/gateways/' . $gateway_token . '/purchase.xml', $xml);
-	
+
 	}
-	
+
 	/**
 	 * finalize_purchase (offsite purchases only)
 	 *
@@ -294,13 +285,13 @@ class Spreedly {
 	 * @param $transaction_token The token for the transaction to finalize
 	 */
 	public function finalize_purchase($transaction_token) {
-	
+
 		return $this->request('/transactions/' . $transaction_token . '.xml', null, 'PUT');
-	
+
 	}
-	
+
 	// Authorize
-	
+
 	/**
 	 * authorize
 	 *
@@ -309,17 +300,17 @@ class Spreedly {
 	 * @param $transaction_details Associative array containing the transaction details
 	 */
 	public function authorize($gateway_token, $transaction_details) {
-	
+
 		$xml = new SimpleXMLElement('<transaction/>');
-		
+
 		foreach($transaction_details as $key => $detail) {
 			$xml->addChild($key, $detail);
 		}
-	
+
 		return $this->request('/gateways/' . $gateway_token . '/authorize.xml', $xml);
-	
+
 	}
-	
+
 	/**
 	 * capture (take authorized funds)
 	 *
@@ -328,31 +319,31 @@ class Spreedly {
 	 * @param $amount Optionally either an array of transaction details or a string/float amount
 	 */
 	public function capture($transaction_token, $transaction_details = null) {
-	
+
 		$xml = null;
-		
+
 		if(!empty($transaction_details)) {
-			
+
 			$xml = new SimpleXMLElement('<transaction/>');
-			
+
 			if(is_array($transaction_details)) {
-			
+
 				foreach($transaction_details as $key => $detail) {
 					$xml->addChild($key, $detail);
 				}
-			
+
 			} else {
-			
+
 				$xml->addChild('amount', $transaction_details);
 			}
 		}
-		
+
 		return $this->request('/transactions/' . $transaction_token . '/capture.xml', $xml);
-	
+
 	}
-	
+
 	// Void
-	
+
 	/**
 	 * void (authorization or, for some gateways, recent actual payment)
 	 *
@@ -361,31 +352,31 @@ class Spreedly {
 	 * @param $amount Optionally either an array of transaction details or a string/float amount
 	 */
 	public function void($transaction_token, $transaction_details = null) {
-	
+
 		$xml = null;
-		
+
 		if(!empty($transaction_details)) {
-			
+
 			$xml = new SimpleXMLElement('<transaction/>');
-			
+
 			if(is_array($transaction_details)) {
-			
+
 				foreach($transaction_details as $key => $detail) {
 					$xml->addChild($key, $detail);
 				}
-			
+
 			} else {
-			
+
 				$xml->addChild('amount', $transaction_details);
 			}
 		}
-		
+
 		return $this->request('/transactions/' . $transaction_token . '/void.xml', $xml);
-	
+
 	}
-	
+
 	// Credit
-	
+
 	/**
 	 * credit Reverse a charge (refund)
 	 *
@@ -394,31 +385,31 @@ class Spreedly {
 	 * @param $amount  Optionally either an array of transaction details or a string/float amount
 	 */
 	public function credit($transaction_token, $transaction_details = null) {
-	
+
 		$xml = null;
-		
+
 		if(!empty($transaction_details)) {
-			
+
 			$xml = new SimpleXMLElement('<transaction/>');
-			
+
 			if(is_array($transaction_details)) {
-			
+
 				foreach($transaction_details as $key => $detail) {
 					$xml->addChild($key, $detail);
 				}
-			
+
 			} else {
-			
+
 				$xml->addChild('amount', $transaction_details);
 			}
 		}
-		
+
 		return $this->request('/transactions/' . $transaction_token . '/credit.xml', $xml);
-	
+
 	}
-	
+
 	// Transcript
-	
+
 	/**
 	 * show_transcript
 	 *
@@ -429,11 +420,11 @@ class Spreedly {
 	public function show_transcript($transaction_token) {
 
 		return $this->request('/transactions/' . $transaction_token . '/transcript');
-	
+
 	}
 
 // Helpers
-	
+
 	/**
 	 * array_to_xml
 	 *
@@ -455,7 +446,7 @@ class Spreedly {
 	    }
 
 	}
-	
+
 }
 
 ?>
