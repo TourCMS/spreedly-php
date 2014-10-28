@@ -4,8 +4,6 @@ https://spreedly.com/
 
 ## Basic setup
 
-Rename `config-example.php` to `config.php` and load your Spreedly API settings:
-
 ```php
 // Set up Spreedly object
 
