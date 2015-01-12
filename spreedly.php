@@ -54,7 +54,7 @@ class Spreedly {
 	 * @param $data XML data to post
 	 * @param $verb HTTP Verb, defaults to POST
 	 */
-	public function request($path, $data = null, $verb = null) {
+	public function request($path, $data = null, $verb = null, $raw = false) {
 		// Prepare the URL we are sending to
 		$url = $this->_base_url.$path;
 
@@ -93,7 +93,8 @@ class Spreedly {
 		$header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
 		$result = substr( $response, $header_size );
 		// convert to SimpleXML
-		$result = simplexml_load_string($result);
+		if(!$raw)
+			$result = simplexml_load_string($result);
 		return($result);
 	}
 
@@ -419,7 +420,7 @@ class Spreedly {
 	 */
 	public function show_transcript($transaction_token) {
 
-		return $this->request('/transactions/' . $transaction_token . '/transcript');
+		return $this->request('/transactions/' . $transaction_token . '/transcript', null, null, true);
 
 	}
 
