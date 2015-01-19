@@ -292,3 +292,15 @@ $transaction = $sly->credit(
 
 print_r($transaction);
 ```
+
+### Transcript
+
+This API call allows you to see the full conversation we had with the payment gateway for a given transaction. You can see exactly what we sent to the gateway and exactly how the gateway responded.
+
+https://docs.spreedly.com/reference/api/v1/transactions/transcript/
+
+```php
+$transcript = $sly->show_trascript('TRANSACTION_TOKEN');
+
+print_r($transcript);
+```
