@@ -14,17 +14,9 @@ $sly = new Spreedly('YOUR_ENVIRONMENT_KEY', 'YOUR_ACCESS_SECRET', 'YOUR_SIGNING_
 
 ## Gateways
 
-### Refresh supported gateways
-
-The wrapper will store a copy of the Spreedly gateways specs XML
-
-```php
-$result = $sly->refresh_supported_gateways();
-```
-
 ### List supported gateways
 
-Load the cached gateway spec file
+List supported gateways, including configuration settings
 ```php
 $result = $sly->list_supported_gateways();
 
