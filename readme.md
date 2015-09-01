@@ -285,6 +285,24 @@ $transaction = $sly->credit(
 print_r($transaction);
 ```
 
+## Transactions
+
+### List Transactions
+
+List the transactions on a gateway, paginated, default ordering is oldest first.
+
+https://docs.spreedly.com/reference/api/v1/gateways/transactions/
+
+```php
+$transactions = $sly->list_transactions('GATEWAY_TOKEN');
+```
+
+Also supports changing the ordering to view the most recent first, plus pagination by providing the "SINCE_TOKEN":
+
+```php
+$transactions = $sly->list_transactions('GATEWAY_TOKEN', 'desc', 'SINCE_TOKEN');
+```
+
 ### Transcript
 
 This API call allows you to see the full conversation we had with the payment gateway for a given transaction. You can see exactly what we sent to the gateway and exactly how the gateway responded.
