@@ -316,14 +316,14 @@ $transaction = $sly->show_transaction('TRANSACTION_TOKEN');
 
 ### Show Transcript
 
-This API call allows you to see the full conversation we had with the payment gateway for a given transaction. You can see exactly what we sent to the gateway and exactly how the gateway responded.
+This API call allows you to see the full conversation Spreedly had with the payment gateway for a given transaction. You can see exactly what was sent to the gateway and exactly how the gateway responded.
 
 Unlike the other methods in the Spreedly API this returns a plain text log rather than XML.
 
 https://docs.spreedly.com/reference/api/v1/transactions/transcript/
 
 ```php
-$transcript = $sly->show_trascript('TRANSACTION_TOKEN');
+$transcript = $sly->show_transcript('TRANSACTION_TOKEN');
 
 echo $transcript;
 ```
