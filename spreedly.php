@@ -100,28 +100,11 @@ class Spreedly {
 
 // Gateways - Options
 
-	public function refresh_supported_gateways() {
-
-				$path = '/gateways.xml';
-
-				$data = $this->request($path, null, 'OPTIONS');
-
-				$gateway_dir =  dirname(__FILE__) . DIRECTORY_SEPARATOR . 'gateway_types';
-
-		    $output_file = fopen($gateway_dir . DIRECTORY_SEPARATOR . 'list.xml', 'w') or die('Cannot open file:');
-
-		    fwrite($output_file, $data->asXml());
-
-		    fclose($output_file);
-
-
-	}
-
 	public function list_supported_gateways() {
 
-		$gateway_list =  dirname(__FILE__) . DIRECTORY_SEPARATOR . 'gateway_types' . DIRECTORY_SEPARATOR . 'list.xml';
+    $path = '/gateways.xml';
 
-		return simplexml_load_file($gateway_list);
+    return $this->request($path, null, 'OPTIONS');
 
 	}
 
@@ -241,6 +224,59 @@ class Spreedly {
 		return $this->request('/gateways/' . $token . '/redact.xml', null, 'PUT');
 
 	}
+
+	// Transactions
+
+		/**
+		 * list_transactions
+		 *
+		 * @author Paul Slugocki
+		 * @param $gateway_token The token for the gateway to list
+		 * @param $order  Optionally order, desc
+		 * @param $since_token Return transactions since this token, e.g. pagination
+		 */
+		public function list_transactions($gateway_token, $order = "", $since_token = "") {
+
+			$url = '/gateways/' . $gateway_token . '/transactions.xml?';
+
+			$params = array();
+
+			if($order != "")
+				$params["order"] = $order;
+
+			if($since_token != "")
+				$params["since_token"] = $since_token;
+
+			$url .= http_build_query($params);
+
+			return $this->request($url);
+
+		}
+
+		/**
+		 * show_transaction
+		 *
+		 * @author Paul Slugocki
+		 * @param $transaction_token The token for the transaction to show
+		 */
+		public function show_transaction($transaction_token) {
+
+			return $this->request('/transactions/' . $transaction_token . '.xml?');
+
+		}
+
+		/**
+		 * show_transcript
+		 *
+		 * @author Paul Slugocki
+		 * @param $transaction_token The token for the transaction to credit
+		 * @param $amount  Optionally either an array of transaction details or a string/float amount
+		 */
+		public function show_transcript($transaction_token) {
+
+			return $this->request('/transactions/' . $transaction_token . '/transcript', null, null, true);
+
+		}
 
 // Payment methods (cards, banks etc)
 
@@ -409,20 +445,6 @@ class Spreedly {
 
 	}
 
-	// Transcript
-
-	/**
-	 * show_transcript
-	 *
-	 * @author Paul Slugocki
-	 * @param $transaction_token The token for the transaction to credit
-	 * @param $amount  Optionally either an array of transaction details or a string/float amount
-	 */
-	public function show_transcript($transaction_token) {
-
-		return $this->request('/transactions/' . $transaction_token . '/transcript', null, null, true);
-
-	}
 
 // Helpers
 
