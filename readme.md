@@ -156,6 +156,28 @@ $result = $sly->remove_from_gateway('PAYMENT_METHOD_TOKEN', 'GATEWAY_TOKEN');
 print $result->message;
 ```
 
+### Show payment method
+
+Get full details of a payment method.
+
+https://docs.spreedly.com/reference/api/v1/payment_methods/show/
+
+```php
+$payment_method = show_payment_method('PAYMENT_METHOD_TOKEN');
+print_r($payment_method);
+```
+
+### List payment method transactions
+
+Get the list of transactions made on a payment method, across all gateways on an environment. Will include internal Spreedly transactions such as adding and redacting the payment method, in addition to things like purchases.
+
+https://docs.spreedly.com/reference/api/v1/payment_methods/transactions/
+
+```php
+$transactions = list_payment_method_transactions('PAYMENT_METHOD_TOKEN');
+print_r($transactions);
+```
+
 ## Using payment methods
 
 ### Purchase
