@@ -72,6 +72,10 @@ class Spreedly {
 		curl_setopt($ch, CURLOPT_USERPWD, $this->_environment_key . ":" . $this->_api_access_secret);
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
+		
+		
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); 
+		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 
 		// If we have a verb set it
 		if(!empty($verb)) {
@@ -291,6 +295,18 @@ class Spreedly {
 		return $this->request('/payment_methods/' . $token . '.xml');
 
 	}
+	
+	/**
+		 * list_payment_method_transactions
+		 *
+		 * @author Paul Slugocki
+		 * @param $token The token for the payment method to show transactions for
+		 */
+		public function list_payment_method_transactions($token) {
+	
+			return $this->request('/payment_methods/' . $token . '/transactions.xml');
+	
+		}
 
 // Transactions
 
