@@ -238,8 +238,9 @@ class Spreedly {
 		 * @param $gateway_token The token for the gateway to list
 		 * @param $order  Optionally order, desc
 		 * @param $since_token Return transactions since this token, e.g. pagination
+		 * @param $count Number of transactions to return, DEFAULT 20
 		 */
-		public function list_transactions($gateway_token, $order = "", $since_token = "", $count = 20) {
+		public function list_transactions($gateway_token, $order = "", $since_token = "", $count = "") {
 
 			$url = '/gateways/' . $gateway_token . '/transactions.xml?';
 
@@ -251,7 +252,7 @@ class Spreedly {
 			if($since_token != "")
 				$params["since_token"] = $since_token;
 
-			if($count != 20)
+			if($count != "")
 				$params["count"] = $count;
 
 			$url .= http_build_query($params);
