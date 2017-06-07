@@ -72,9 +72,9 @@ class Spreedly {
 		curl_setopt($ch, CURLOPT_USERPWD, $this->_environment_key . ":" . $this->_api_access_secret);
 		curl_setopt($ch, CURLOPT_HTTPAUTH, CURLAUTH_BASIC);
 		curl_setopt($ch, CURLINFO_HEADER_OUT, true);
-		
-		
-		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE); 
+
+
+		curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
 		curl_setopt($ch, CURLOPT_SSL_VERIFYHOST, FALSE);
 
 		// If we have a verb set it
@@ -239,7 +239,7 @@ class Spreedly {
 		 * @param $order  Optionally order, desc
 		 * @param $since_token Return transactions since this token, e.g. pagination
 		 */
-		public function list_transactions($gateway_token, $order = "", $since_token = "") {
+		public function list_transactions($gateway_token, $order = "", $since_token = "", $count = 20) {
 
 			$url = '/gateways/' . $gateway_token . '/transactions.xml?';
 
@@ -250,6 +250,9 @@ class Spreedly {
 
 			if($since_token != "")
 				$params["since_token"] = $since_token;
+
+			if($count != 20)
+				$params["count"] = $count;
 
 			$url .= http_build_query($params);
 
@@ -295,7 +298,7 @@ class Spreedly {
 		return $this->request('/payment_methods/' . $token . '.xml');
 
 	}
-	
+
 	/**
 		 * list_payment_method_transactions
 		 *
@@ -303,9 +306,9 @@ class Spreedly {
 		 * @param $token The token for the payment method to show transactions for
 		 */
 		public function list_payment_method_transactions($token) {
-	
+
 			return $this->request('/payment_methods/' . $token . '/transactions.xml');
-	
+
 		}
 
 // Transactions
