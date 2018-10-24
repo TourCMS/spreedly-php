@@ -176,7 +176,7 @@ class Spreedly {
 			$xml->addChild('gateway_type', $gateway_type);
 
 			foreach($gateway_settings as $key => $setting) {
-				$xml->addChild($key, $setting);
+				$xml->addChild($key, htmlspecialchars($setting));
 			}
 
 		}
