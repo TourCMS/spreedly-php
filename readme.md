@@ -12,6 +12,22 @@ https://spreedly.com/
 $sly = new Spreedly('YOUR_ENVIRONMENT_KEY', 'YOUR_ACCESS_SECRET', 'YOUR_SIGNING_SECRET');
 ```
 
+### Override base url
+
+Occasionally Spreedly provide a different URL for testing purposes.
+
+```php
+echo $sly->get_base_url();
+$sly->set_base_url('https://core-test.spreedly.com/v1');
+echo $sly->get_base_url();
+```
+
+```
+https://core.spreedly.com/v1
+https://core-test.spreedly.com/v1
+```
+
+
 ## Gateways
 
 ### List supported gateways
