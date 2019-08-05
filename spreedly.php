@@ -102,6 +102,27 @@ class Spreedly {
 		return($result);
 	}
 
+	/**
+	 * get_base_url
+	 *
+	 * @author Paul Slugocki
+	 * @return String
+	 */
+	public function get_base_url() {
+		return $this->_base_url;
+	}
+	/**
+	 * set_base_url
+	 *
+	 * @author Paul Slugocki
+	 * @param $url New base url
+	 * @return Boolean
+	 */
+	public function set_base_url($url) {
+		$this->_base_url = $url;
+		return true;
+	}
+
 // Gateways - Options
 
 	public function list_supported_gateways() {
