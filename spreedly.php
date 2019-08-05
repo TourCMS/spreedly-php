@@ -490,6 +490,63 @@ class Spreedly {
 
 	}
 
+	/**
+	 * ensure_simplexml
+	 * If not already XML, assume string and convert
+	 */
+	private function ensure_simplexml($xml) {
+
+		if(!($xml instanceof SimpleXMLElement)) {
+			$xml = simplexml_load_string($xml);
+		}
+
+		return $xml;
+	}
+
+	/**
+	 * verify_signature
+	 * Accept a transaction XML string or SimpleXMLElement, return true or false
+	 */
+	public function verify_transaction_signature($transaction) {
+
+		// Make sure we have SimpleXMLElement
+		$transaction = $this->ensure_simplexml($transaction);
+
+		// Make sure we are at the transaction level, not the transactions level
+		if(isset($transaction->transaction))
+			$transaction = $transaction->transaction[0];
+
+		// Compare the signature in the XML with the one we generate
+		return $transaction->signed->signature == $this->generate_transaction_signature($transaction);
+
+	}
+
+	/**
+	 * generate_signature
+	 * Return the signature for a given transaction XML
+	 */
+	private function generate_transaction_signature($transaction) {
+
+		$algorithm = $transaction->signed->algorithm;
+
+		$fields_string = $transaction->signed->fields;
+
+		$fields = explode(" ", $fields_string);
+
+		$values = array();
+
+		foreach ($fields as $field) {
+			$values[] = $transaction->$field;
+		}
+
+		$string_to_sign = implode("|", $values);
+
+		$signature = hash_hmac($algorithm, $string_to_sign, $this->_signing_secret, FALSE );
+
+		return $signature;
+
+	}
+
 }
 
 ?>

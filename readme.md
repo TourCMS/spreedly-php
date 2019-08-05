@@ -349,3 +349,41 @@ $transcript = $sly->show_transcript('TRANSACTION_TOKEN');
 
 echo $transcript;
 ```
+
+### Verify signature
+
+For 3D Secure 1 Spreedly can post a callback XML
+
+https://docs.spreedly.com/guides/offsite-payments/signed-requests/
+
+```php
+$xml = '<transactions>
+      <transaction>
+        <amount type="integer">100</amount>
+        <on_test_gateway type="boolean">false</on_test_gateway>
+        <created_at type="datetime">2012-09-10T20:35:10Z</created_at>
+        <updated_at type="datetime">2012-09-10T20:35:11Z</updated_at>
+        <currency_code>USD</currency_code>
+        <succeeded type="boolean">true</succeeded>
+        <state>succeeded</state>
+        <token>5AG4P7FPjlfIA6aED6AgZvUEehx</token>
+        <transaction_type>OffsitePurchase</transaction_type>
+        <order_id nil="true"></order_id>
+        <ip nil="true"></ip>
+        <callback_url>http://example.com/handle_callback</callback_url>
+        <signed>
+          <signature>b81436daf0d695404c5bf7a2aecf049d460bb6e1</signature>
+          <fields>amount callback_url created_at currency_code ip on_test_gateway order_id state succeeded token transaction_type updated_at</fields>
+          <algorithm>sha1</algorithm>
+        </signed>
+      </transaction>
+    </transactions>';
+
+$simplexml = simplexml_load_string($xml);
+
+if( $sly->verify_transaction_signature($simplexml->transaction) ) {
+  echo "Signature valid";
+} else {
+  echo "Signature not valid";
+}
+```
