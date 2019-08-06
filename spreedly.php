@@ -320,7 +320,7 @@ class Spreedly {
 		 */
 		public function show_transaction($transaction_token) {
 
-			return $this->request('/transactions/' . $transaction_token . '.xml?');
+			return $this->request('/transactions/' . $transaction_token . '.' . $this->_response_format . '?');
 
 		}
 
@@ -345,7 +345,7 @@ class Spreedly {
 		*/
 		public function complete_transaction($transaction_token) {
 
-		return $this->request('/transactions/' . $transaction_token . '/complete.xml', null, 'POST');
+		return $this->request('/transactions/' . $transaction_token . '/complete.' . $this->_response_format, null, 'POST');
 
 		}
 
