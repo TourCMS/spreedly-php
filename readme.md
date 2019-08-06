@@ -8,8 +8,23 @@ https://spreedly.com/
 // Set up Spreedly object
 
 // Third parameter, signing secret, is only required for hosted payment pages / 3D Secure
+// Fourth parameter, response format, defaults to xml if not provided, can be set to 'json'
 
-$sly = new Spreedly('YOUR_ENVIRONMENT_KEY', 'YOUR_ACCESS_SECRET', 'YOUR_SIGNING_SECRET');
+$sly = new Spreedly('YOUR_ENVIRONMENT_KEY', 'YOUR_ACCESS_SECRET', 'YOUR_SIGNING_SECRET', 'RESPONSE_FORMAT');
+```
+### Override response format
+
+The default response format is xml, that can either be changed in the constructor (above) or changed at any point
+
+```php
+echo $sly->get_response_format();
+$sly->set_response_format('json');
+echo $sly->get_response_format();
+```
+
+```
+xml
+json
 ```
 
 ### Override base url
