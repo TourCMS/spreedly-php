@@ -307,6 +307,18 @@ class Spreedly {
 
 		}
 
+		/**
+		* Complete (3DS 2)
+		*
+		* @author Paul Slugocki
+		* @param $transaction_token The token for the transaction to complete
+		*/
+		public function complete_transaction($transaction_token) {
+
+		return $this->request('/transactions/' . $transaction_token . '/complete.xml', null, 'POST');
+
+		}
+
 // Payment methods (cards, banks etc)
 
 	/**
