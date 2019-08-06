@@ -323,6 +323,14 @@ $transaction = $sly->credit(
 print_r($transaction);
 ```
 
+### Complete (3DSecure2)
+
+Complete a transaction.
+
+```php
+$result = $sly->complete_transaction('TRANSACTION_TOKEN');
+```
+
 ## Transactions
 
 ### List Transactions
