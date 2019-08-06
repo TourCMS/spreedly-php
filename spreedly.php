@@ -32,6 +32,7 @@ class Spreedly {
 	protected $_api_access_secret = '';
 	protected $_environment_key = '';
 	protected $_signing_secret = '';
+	protected $_response_format = '';
 
 	/**
 	 * __construct
@@ -40,10 +41,11 @@ class Spreedly {
 	 * @param $api_access_secret
 	 * @param $environment_key
 	 */
-	public function __construct($environment_key, $api_access_secret, $signing_secret = '') {
+	public function __construct($environment_key, $api_access_secret, $signing_secret = '', $response_format = 'xml') {
 		$this->_api_access_secret = $api_access_secret;
 		$this->_environment_key = $environment_key;
 		$this->_signing_secret = $signing_secret;
+		$this->_response_format = $response_format;
 	}
 
 	/**
@@ -96,9 +98,16 @@ class Spreedly {
 		// Strip out the result
 		$header_size = curl_getinfo( $ch, CURLINFO_HEADER_SIZE );
 		$result = substr( $response, $header_size );
-		// convert to SimpleXML
-		if(!$raw)
-			$result = simplexml_load_string($result);
+
+		// convert to SimpleXML/JSON decode
+		if(!$raw) {
+			if($this->_response_format == "json") {
+				$result = json_decode($result);
+			} else {
+				$result = simplexml_load_string($result);
+			}
+		}
+
 		return($result);
 	}
 
@@ -123,11 +132,32 @@ class Spreedly {
 		return true;
 	}
 
+	/**
+	 * get_response_format
+	 *
+	 * @author Paul Slugocki
+	 * @return String
+	 */
+	public function get_response_format() {
+		return $this->_response_format;
+	}
+	/**
+	 * set_response_format
+	 *
+	 * @author Paul Slugocki
+	 * @param $url New response format (xml/json)
+	 * @return Boolean
+	 */
+	public function set_response_format($response_format) {
+		$this->_response_format = $response_format;
+		return true;
+	}
+
 // Gateways - Options
 
 	public function list_supported_gateways() {
 
-    $path = '/gateways.xml';
+    $path = '/gateways.'.$this->_response_format;
 
     return $this->request($path, null, 'OPTIONS');
 
@@ -135,7 +165,7 @@ class Spreedly {
 
 	public function show_supported_gateway($type) {
 
-		$gateway_list =  simplexml_load_file(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'gateway_types' . DIRECTORY_SEPARATOR . 'list.xml');
+		$gateway_list =  simplexml_load_file(dirname(__FILE__) . DIRECTORY_SEPARATOR . 'gateway_types' . DIRECTORY_SEPARATOR . 'list.'.$this->_response_format);
 
 		$xpath = '//gateway[gateway_type="' . $type . '"]';
 
@@ -158,7 +188,7 @@ class Spreedly {
 	 */
 	public function list_gateways($since_token = null) {
 
-		$path = '/gateways.xml';
+		$path = '/gateways.'.$this->_response_format;
 
 		if(!empty($since_token))
 			$path .= '?since_token=' . $since_token;
@@ -175,7 +205,7 @@ class Spreedly {
 	 */
 	public function show_gateway($token) {
 
-		return $this->request('/gateways/' . $token . '.xml');
+		return $this->request('/gateways/' . $token . '.'.$this->_response_format);
 
 	}
 
@@ -202,7 +232,7 @@ class Spreedly {
 
 		}
 
-		return $this->request('/gateways.xml', $xml);
+		return $this->request('/gateways.'.$this->_response_format, $xml);
 
 	}
 
@@ -214,7 +244,7 @@ class Spreedly {
 	 */
 	public function retain_gateway($token) {
 
-		return $this->request('/gateways/' . $token . '/retain.xml', null, 'PUT');
+		return $this->request('/gateways/' . $token . '/retain.'.$this->_response_format, null, 'PUT');
 
 	}
 
@@ -233,7 +263,7 @@ class Spreedly {
 			$xml->addChild($key, $setting);
 		}
 
-		return $this->request('/gateways/' . $token . '.xml', $xml, 'PUT');
+		return $this->request('/gateways/' . $token . '.'.$this->_response_format, $xml, 'PUT');
 
 	}
 
@@ -246,7 +276,7 @@ class Spreedly {
 	 */
 	public function redact_gateway($token) {
 
-		return $this->request('/gateways/' . $token . '/redact.xml', null, 'PUT');
+		return $this->request('/gateways/' . $token . '/redact.'.$this->_response_format, null, 'PUT');
 
 	}
 
@@ -263,7 +293,7 @@ class Spreedly {
 		 */
 		public function list_transactions($gateway_token, $order = "", $since_token = "", $count = "") {
 
-			$url = '/gateways/' . $gateway_token . '/transactions.xml?';
+			$url = '/gateways/' . $gateway_token . '/transactions.' . $this->_response_format . '?';
 
 			$params = array();
 
@@ -329,7 +359,7 @@ class Spreedly {
 	 */
 	public function show_payment_method($token) {
 
-		return $this->request('/payment_methods/' . $token . '.xml');
+		return $this->request('/payment_methods/' . $token . '.'.$this->_response_format);
 
 	}
 
@@ -341,7 +371,7 @@ class Spreedly {
 		 */
 		public function list_payment_method_transactions($token) {
 
-			return $this->request('/payment_methods/' . $token . '/transactions.xml');
+			return $this->request('/payment_methods/' . $token . '/transactions.'.$this->_response_format);
 
 		}
 
@@ -364,7 +394,7 @@ class Spreedly {
 			$xml->addChild($key, $detail);
 		}
 
-		return $this->request('/gateways/' . $gateway_token . '/purchase.xml', $xml);
+		return $this->request('/gateways/' . $gateway_token . '/purchase.'.$this->_response_format, $xml);
 
 	}
 
@@ -376,7 +406,7 @@ class Spreedly {
 	 */
 	public function finalize_purchase($transaction_token) {
 
-		return $this->request('/transactions/' . $transaction_token . '.xml', null, 'PUT');
+		return $this->request('/transactions/' . $transaction_token . '.'.$this->_response_format, null, 'PUT');
 
 	}
 
@@ -397,7 +427,7 @@ class Spreedly {
 			$xml->addChild($key, $detail);
 		}
 
-		return $this->request('/gateways/' . $gateway_token . '/authorize.xml', $xml);
+		return $this->request('/gateways/' . $gateway_token . '/authorize.'.$this->_response_format, $xml);
 
 	}
 
@@ -428,7 +458,7 @@ class Spreedly {
 			}
 		}
 
-		return $this->request('/transactions/' . $transaction_token . '/capture.xml', $xml);
+		return $this->request('/transactions/' . $transaction_token . '/capture.'.$this->_response_format, $xml);
 
 	}
 
@@ -461,7 +491,7 @@ class Spreedly {
 			}
 		}
 
-		return $this->request('/transactions/' . $transaction_token . '/void.xml', $xml);
+		return $this->request('/transactions/' . $transaction_token . '/void.'.$this->_response_format, $xml);
 
 	}
 
@@ -494,7 +524,7 @@ class Spreedly {
 			}
 		}
 
-		return $this->request('/transactions/' . $transaction_token . '/credit.xml', $xml);
+		return $this->request('/transactions/' . $transaction_token . '/credit.'.$this->_response_format, $xml);
 
 	}
 
