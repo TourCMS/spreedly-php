@@ -33,6 +33,8 @@ class Spreedly {
 	protected $_environment_key = '';
 	protected $_signing_secret = '';
 	protected $_response_format = '';
+    protected $_test_url = 'https://core-test.spreedly.com/v1';
+
 
 	/**
 	 * __construct
@@ -41,11 +43,15 @@ class Spreedly {
 	 * @param $api_access_secret
 	 * @param $environment_key
 	 */
-	public function __construct($environment_key, $api_access_secret, $signing_secret = '', $response_format = 'xml') {
+	public function __construct($environment_key, $api_access_secret, $signing_secret = '', $response_format = 'xml', $enable_test = 0) {
 		$this->_api_access_secret = $api_access_secret;
 		$this->_environment_key = $environment_key;
 		$this->_signing_secret = $signing_secret;
 		$this->_response_format = $response_format;
+
+        if($enable_test == 1) {
+            $this->set_base_url($this->_test_url);
+        }
 	}
 
 	/**
