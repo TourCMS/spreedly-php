@@ -226,10 +226,7 @@ class Spreedly {
 
 			$xml->addChild('gateway_type', $gateway_type);
 
-			foreach($gateway_settings as $key => $setting) {
-				$xml->addChild($key, htmlspecialchars($setting));
-			}
-
+            $this->array_to_xml($gateway_settings, $xml);
 		}
 
 		return $this->request('/gateways.'.$this->_response_format, $xml);
@@ -259,9 +256,7 @@ class Spreedly {
 
 		$xml = new SimpleXMLElement('<gateway />');
 
-		foreach($gateway_settings as $key => $setting) {
-			$xml->addChild($key, $setting);
-		}
+        $this->array_to_xml($gateway_settings, $xml);
 
 		return $this->request('/gateways/' . $token . '.'.$this->_response_format, $xml, 'PUT');
 
@@ -390,9 +385,7 @@ class Spreedly {
 
 		$xml = new SimpleXMLElement('<transaction/>');
 
-		foreach($transaction_details as $key => $detail) {
-			$xml->addChild($key, $detail);
-		}
+        $this->array_to_xml($transaction_details, $xml);
 
 		return $this->request('/gateways/' . $gateway_token . '/purchase.'.$this->_response_format, $xml);
 
@@ -423,9 +416,7 @@ class Spreedly {
 
 		$xml = new SimpleXMLElement('<transaction/>');
 
-		foreach($transaction_details as $key => $detail) {
-			$xml->addChild($key, $detail);
-		}
+        $this->array_to_xml($transaction_details, $xml);
 
 		return $this->request('/gateways/' . $gateway_token . '/authorize.'.$this->_response_format, $xml);
 
@@ -448,9 +439,7 @@ class Spreedly {
 
 			if(is_array($transaction_details)) {
 
-				foreach($transaction_details as $key => $detail) {
-					$xml->addChild($key, $detail);
-				}
+                $this->array_to_xml($transaction_details, $xml);
 
 			} else {
 
@@ -481,9 +470,7 @@ class Spreedly {
 
 			if(is_array($transaction_details)) {
 
-				foreach($transaction_details as $key => $detail) {
-					$xml->addChild($key, $detail);
-				}
+                $this->array_to_xml($transaction_details, $xml);
 
 			} else {
 
@@ -542,12 +529,12 @@ class Spreedly {
 	        if(is_array($value)) {
 	            if(!is_numeric($key)){
 	                $subnode = $xml->addChild("$key");
-	                array_to_xml($value, $subnode);
+	                $this->array_to_xml($value, $subnode);
 	            } else {
-	                array_to_xml($value, $xml);
+	                $this->array_to_xml($value, $xml);
 	            }
 	        } else {
-	            $xml->addChild("$key","$value");
+	            $xml->addChild("$key", htmlspecialchars($value));
 	        }
 	    }
 
