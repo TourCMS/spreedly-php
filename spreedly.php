@@ -157,9 +157,9 @@ class Spreedly {
 
 	public function list_supported_gateways() {
 
-    $path = '/gateways.'.$this->_response_format;
+    $path = '/gateways_options.'.$this->_response_format;
 
-    return $this->request($path, null, 'OPTIONS');
+    return $this->request($path, null, 'GET');
 
 	}
 
